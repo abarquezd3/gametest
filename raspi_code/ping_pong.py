@@ -2,9 +2,23 @@ from tkinter import *
 from tkinter.ttk import*
 import turtle 
 import RPi.GPIO as GPIO
+from time import sleep
 
-paddle_speed = 30
-ball_spped = 0.09
+GPIO.setmode(GPIO.BCM)
+
+red_up = 17 # RED Controller
+red_down = 27
+
+blue_up = 14 # BLUE Controller
+blue_down = 15
+
+paddle_speed = 2 # game settings
+ball_spped = 1
+
+GPIO.setup(red_up, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(red_down, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(blue_up, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(blue_down, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 
 wm = turtle.Screen()
 wm.title("Ping pong")
@@ -70,16 +84,25 @@ def paddle_blue_down():
     paddle_blue.sety(y)
 
 wm.listen()
-wm.onkeypress(paddle_red_up, "w")
-wm.onkeypress(paddle_red_down, "s")
-wm.onkeypress(paddle_blue_up, "Up")
-wm.onkeypress(paddle_blue_down, "Down")
+# wm.onkeypress(paddle_red_up, "w")
+# wm.onkeypress(paddle_red_down, "s")
+# wm.onkeypress(paddle_blue_up, "Up")
+# wm.onkeypress(paddle_blue_down, "Down")
 
 while True:
     ball.setx(ball.xcor() + ball.dx)
     ball.sety(ball.ycor() + ball.dy)
     wm.update()
-    
+
+    if GPIO.input(red_up) == 0:
+        paddle_red_up()
+    if GPIO.input(red_down) == 0:
+        paddle_red_down()
+    if GPIO.input(blue_up) == 0:
+        paddle_blue_up()
+    if GPIO.input(blue_down) == 0:
+        paddle_blue_down()
+
     #wall
     if ball.ycor() > 250:
         ball.sety(250)
