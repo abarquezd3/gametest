@@ -2,7 +2,20 @@ import random
 import pygame
 import tkinter as tk
 from tkinter import messagebox
+import RPi.GPIO as GPIO
+from time import sleep
  
+GPIO.setmode(GPIO.BCM)
+_up = 17 # controller
+_down = 27
+_left = 14 
+_right = 15
+
+GPIO.setup(_up, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(_down, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(_left, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(_right, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
 class cube(object):
     rows = 20
     w = 500
@@ -53,22 +66,19 @@ class snake(object):
             keys = pygame.key.get_pressed()
  
             for key in keys:
-                if keys[pygame.K_LEFT]:
+                if GPIO.input(_left) == 0:
                     self.dirnx = -1
                     self.dirny = 0
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
- 
-                elif keys[pygame.K_RIGHT]:
+                if GPIO.input(_right) == 0:
                     self.dirnx = 1
                     self.dirny = 0
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
- 
-                elif keys[pygame.K_UP]:
+                if GPIO.input(_up) == 0:
                     self.dirnx = 0
                     self.dirny = -1
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
- 
-                elif keys[pygame.K_DOWN]:
+                if GPIO.input(_down) == 0:
                     self.dirnx = 0
                     self.dirny = 1
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
